@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3001:3001"  # Replace 3000 with your application's port if different
+    env_file:
+      - .env  # This will read the environment variables from your .env file
+    volumes:
+      - .:/usr/src/app # Mount the current directory into the container
+      - /usr/src/app/node_modules # Avoid overwriting node_modules
+    command: npm run dev
