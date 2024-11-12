@@ -1,4 +1,5 @@
 import { Employee } from "../models/employee.js";
+import { uploadToCloudinary } from "../utils/fileUpload.js";
 // export const postEmployeeInfo = async (empData: EmployeeType) => {
 //   try {
 //     const {
@@ -23,42 +24,39 @@ import { Employee } from "../models/employee.js";
 export const postEmployeeInfoService = async (data, res, files) => {
     // console.log("12",data.birth_date);
     try {
+        const parsedBirthDate = data.birth_date
+            ? new Date(data.birth_date.split("/").reverse().join("-"))
+            : undefined;
         const employeeData = {
             name: data.name,
             contact_number: data.contact_number,
             email: data.email,
             tech_stack: data.tech_stack,
-            date_of_joining: new Date(new Date(data.date_of_joining).toISOString().split('T')[0]),
+            date_of_joining: new Date(new Date(data.date_of_joining).toISOString().split("T")[0]),
             position: data.position,
             year_of_exp: data.year_of_exp || 0,
             cl: data.cl || 0,
             el: data.el || 0,
             salary: data.salary || 0,
             performance: data.performance,
-            birth_date: data.birth_date,
-            address: data.address
+            birth_date: parsedBirthDate,
+            address: data.address,
         };
-        //console.log("12",employeeData.birth_date);
         if (files.resume && files.resume.size > 0) {
-            // employeeData.resume = await uploadToCloudinary(files.resume, 'employee_documents');
+            employeeData.resume = await uploadToCloudinary(files.resume, "employee_documents");
         }
         if (files.experienceLetter && files.experienceLetter.size > 0) {
-            // employeeData.experience_letter = await uploadToCloudinary(files.experienceLetter, 'employee_documents');
+            employeeData.experience_letter = await uploadToCloudinary(files.experienceLetter, "employee_documents");
         }
         if (files.relievingLetter && files.relievingLetter.size > 0) {
-            // employeeData.reliving_letter = await uploadToCloudinary(files.relievingLetter, 'employee_documents');
+            employeeData.reliving_letter = await uploadToCloudinary(files.relievingLetter, "employee_documents");
         }
-        console.log("18", employeeData);
-        const newEmployee = new Employee(employeeData);
-        //console.log(typeof(newEmployee.date_of_joining));
-        console.log(newEmployee.birth_date);
-        console.log("19", newEmployee);
-        //await newEmployee.save(); // Save to MongoDB
-        //return newEmployee;
-        //return employeeData
+        // console.log("18", employeeData);
+        const newEmployee = await Employee.create(employeeData);
+        return newEmployee;
     }
     catch (error) {
-        console.error('Error uploading files or processing employee info:', error);
-        throw new Error('Failed to process employee information.');
+        console.error("Error uploading files or processing employee info:", error);
+        throw new Error("Failed to process employee information.");
     }
 };

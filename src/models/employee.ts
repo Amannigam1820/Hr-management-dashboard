@@ -63,7 +63,10 @@ const EmployeeSchema = new Schema({
     type: Number,
     required: true,
   },
-  birth_date: { type: Date, required: true },
+  birth_date: {
+    type: Date,
+    required: true,
+  },
   address: {
     type: String,
     required: true,
@@ -90,7 +93,6 @@ const EmployeeSchema = new Schema({
   },
   work_anniversary: {
     type: Date,
-    
   },
   createdAt: {
     type: Date,
