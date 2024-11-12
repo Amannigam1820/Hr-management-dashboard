@@ -4,29 +4,7 @@ import { uploadToCloudinary } from "../utils/fileUpload.js";
 import { v2 as cloudinary } from "cloudinary";
 import { UploadedFile } from "express-fileupload";
 
-// export const postEmployeeInfo = async (empData: EmployeeType) => {
-//   try {
-//     const {
-//       name,
-//       contact_number,
-//       email,
-//       tech_stack,
-//       resume,
-//       date_of_joining,
-//       position,
-//       year_of_exp,
-//       cl,
-//       el,
-//       salary,
-//       performance,
-//       birth_date,
-//       address,
 
-//       reliving_letter,
-
-//       experience_letter,
-//       work_anniversary,
-//     } = empData;
 
 export const postEmployeeInfoService = async (
   data: any,
