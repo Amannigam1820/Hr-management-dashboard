@@ -1,4 +1,4 @@
-import { postEmployeeInfoService } from "../service/employeeService.js";
+import { deleteEmployeeService, getAllEmployeeInfoService, getEmployeeInfoByIdService, postEmployeeInfoService, updateEmployeeInfoService, } from "../service/employeeService.js";
 export const postEmployeeInfoController = async (req, res) => {
     try {
         // Extract data from req.body
@@ -9,7 +9,7 @@ export const postEmployeeInfoController = async (req, res) => {
             tech_stack: req.body.tech_stack,
             date_of_joining: req.body.date_of_joining,
             position: req.body.position,
-            yearsOfExperience: parseInt(req.body.yearsOfExperience, 10),
+            year_of_exp: req.body.year_of_exp,
             cl: parseInt(req.body.cl, 10),
             el: parseInt(req.body.el, 10),
             salary: parseFloat(req.body.salary),
@@ -25,13 +25,8 @@ export const postEmployeeInfoController = async (req, res) => {
         };
         //console.log("2",files);
         // Call the service function
-        const result = await postEmployeeInfoService(employeeData, res, files);
+        await postEmployeeInfoService(employeeData, res, files);
         //console.log("3", result);
-        // Respond with the result
-        res.status(201).json({
-            message: "Employee information posted successfully",
-            data: result,
-        });
     }
     catch (error) {
         console.error("Error in postEmployeeInfoController:", error);
@@ -39,5 +34,49 @@ export const postEmployeeInfoController = async (req, res) => {
             message: "Failed to post employee information",
             error: error.message,
         });
+    }
+};
+export const getAllEmployeeInfoController = async (req, res) => {
+    try {
+        await getAllEmployeeInfoService(res);
+    }
+    catch (error) {
+        return res
+            .status(500)
+            .json({ message: "Internal Server Error", error: error.message });
+    }
+};
+export const getEmployeeInfoByIdController = async (req, res) => {
+    const employeeId = req.params.id;
+    try {
+        await getEmployeeInfoByIdService(employeeId, res);
+    }
+    catch (error) {
+        return res
+            .status(500)
+            .json({ message: "Internal Server Error", error: error.message });
+    }
+};
+export const deleteEmployeeController = async (req, res) => {
+    try {
+        const employeeId = req.params.id;
+        await deleteEmployeeService(employeeId, res);
+    }
+    catch (error) {
+        return res
+            .status(500)
+            .json({ message: "Internal Server Error", error: error.message });
+    }
+};
+export const updateEmployeeController = async (req, res) => {
+    try {
+        const employeeId = req.params.id;
+        const updatedData = req.body;
+        await updateEmployeeInfoService(employeeId, res, updatedData);
+    }
+    catch (error) {
+        return res
+            .status(500)
+            .json({ message: "Internal Server Error", error: error.message });
     }
 };

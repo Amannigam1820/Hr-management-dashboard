@@ -1,12 +1,19 @@
 import express from "express";
 import {
-  postEmployeeInfoController
-} from "../controller/employeeController.js"
+  deleteEmployeeController,
+  getAllEmployeeInfoController,
+  getEmployeeInfoByIdController,
+  postEmployeeInfoController,
+  updateEmployeeController,
+} from "../controller/employeeController.js";
 import { isAuthorized } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 router.post("/register", postEmployeeInfoController);
-
+router.get("/all", getAllEmployeeInfoController);
+router.get("/:id", getEmployeeInfoByIdController);
+router.delete("/:id", deleteEmployeeController);
+router.put("/:id",updateEmployeeController)
 
 export default router;

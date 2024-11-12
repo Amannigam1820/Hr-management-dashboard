@@ -3,6 +3,7 @@ import { EmployeeType } from "../types/employeeType.js";
 import { uploadToCloudinary } from "../utils/fileUpload.js";
 import { v2 as cloudinary } from "cloudinary";
 import { UploadedFile } from "express-fileupload";
+import mongoose from "mongoose";
 
 // export const postEmployeeInfo = async (empData: EmployeeType) => {
 //   try {
@@ -83,12 +84,102 @@ export const postEmployeeInfoService = async (
       );
     }
 
-    // console.log("18", employeeData);
+    //console.log("18", employeeData);
 
     const newEmployee = await Employee.create(employeeData);
-    return newEmployee;
+    return res.status(201).json({
+      message: "Employee Registered Successfully.",
+      data: newEmployee,
+    });
   } catch (error) {
     console.error("Error uploading files or processing employee info:", error);
     throw new Error("Failed to process employee information.");
   }
 };
+
+export const getAllEmployeeInfoService = async (res: any) => {
+  try {
+    const employees = await Employee.find();
+    if (!employees) {
+      return res.status(404).json({
+        message: "NO Employee Registered Yet!",
+      });
+    }
+    return res.status(200).json({
+      message: "All Employeee.",
+      data: employees,
+    });
+  } catch (error) {
+    console.error("Fetching all Employee error:", error);
+    return res
+      .status(500)
+      .json({ message: "Server error, please try again later." });
+  }
+};
+export const getEmployeeInfoByIdService = async (
+  employeeId: string,
+  res: any
+) => {
+  if (!mongoose.Types.ObjectId.isValid(employeeId)) {
+    return res.status(400).json({
+      message: "Invalid ID format. Please provide a valid ObjectId.",
+    });
+  }
+  const employee = await Employee.findById(employeeId);
+  if (!employee) {
+    return res.status(401).json({
+      message: `No Employee find from this ${employeeId}`,
+    });
+  }
+  return res.status(402).json({
+    message: "Employee Details",
+    data: employee,
+  });
+};
+
+export const deleteEmployeeService = async (employeeId: string, res: any) => {
+  //console.log(employeeId);
+
+  if (!mongoose.Types.ObjectId.isValid(employeeId)) {
+    return res.status(400).json({
+      message: "Invalid ID format. Please provide a valid ObjectId.",
+    });
+  }
+  const employee = await Employee.findById(employeeId);
+  if (!employee) {
+    return res.status(401).json({
+      message: `NO Employee found from this ${employeeId}`,
+    });
+  }
+  const result = await Employee.deleteOne({ _id: employeeId });
+  if (result.deletedCount === 0) {
+    return res
+      .status(500)
+      .json({ message: `Failed to delete hr with ID: ${employeeId}` });
+  }
+  return res
+    .status(200)
+    .json({ message: `Hr with ID: ${employeeId} successfully deleted` });
+};
+
+
+export const updateEmployeeInfoService = async(employeeId:string,res:any,updatedData:any)=>{
+  if (!mongoose.Types.ObjectId.isValid(employeeId)) {
+    return res.status(400).json({
+      message: "Invalid ID format. Please provide a valid ObjectId.",
+    });
+  }
+  const hr = await Employee.findById(employeeId);
+  if (!hr) {
+    return res.status(404).json({ message: `No Employee found with ID: ${employeeId}` });
+  }
+  const updatedEmployee = await Employee.findByIdAndUpdate(employeeId, updatedData, {
+    new: true,
+    //runValidators: true,
+  });
+
+  return res.status(200).json({
+    message: `User with ID: ${employeeId} successfully updated`,
+    user: updatedEmployee,
+  });
+}
