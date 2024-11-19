@@ -40,7 +40,7 @@ export const postEmployeeInfoController = async (
 
     // Respond with the result
     res.status(201).json({
-      message: "Employee information posted successfully 12345 ddsdsdd aefmefkmfksdm",
+      message: "Employee information posted successfully",
       data: result,
     });
   } catch (error: any) {
